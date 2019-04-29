@@ -20,6 +20,17 @@ namespace Supermarket
             _GroceryItemsList.Add(Item);
         }
 
+        public double TotalGroceryList()
+        {
+            double total = 0;
+            
+            foreach (var item in _GroceryItemsList)
+            {
+                total += item.price;
+            }
+
+            return total;
+        }
     }
 
 }

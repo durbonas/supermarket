@@ -27,6 +27,10 @@ namespace Supermarket
                 System.Console.WriteLine($"{item.name}...............{item.price}");
             }
 
+            //Print out total price for shopping list
+            var Total = myGroceryList.TotalGroceryList();
+            System.Console.WriteLine($"TOTAL...............{Total}");
+
         }
     }
 }
