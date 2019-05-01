@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Supermarket
 {
@@ -22,14 +23,7 @@ namespace Supermarket
             }
 
             //Print out my shopping list
-            foreach (var item in myGroceryList.GroceryItemsList)
-            {
-                System.Console.WriteLine($"{item.name}...............{item.price}");
-            }
-
-            //Print out total price for shopping list
-            var Total = myGroceryList.TotalGroceryList();
-            System.Console.WriteLine($"TOTAL...............{Total}");
+            myGroceryList.PrintReceipt();
 
         }
     }
