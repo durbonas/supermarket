@@ -7,23 +7,30 @@ namespace Supermarket
     class Program
     {
         
-        static void Main(string[] args)
+        static void Main(string[] Barcodes)
         {   
-            //Create a new Grocery List
-            var myGroceryList = new GroceryList();
+            //Build store list
+            var GroceryCatalogue = new GroceryList().BuildGroceryCatalogue();
 
-            //Cycle through shopping list and add items
-            foreach (var item in args)
+            //Start Receipt
+            var CustomerReceipt = new GroceryList();
+
+            //Cycle through barcodes and add items
+            foreach (var barcode in Barcodes)
             {   
-                //For every shopping item create new GroceryItem Object
-                var GroceryPurchase = new GroceryItem(item);
+                //If barcode matches return item
+                var GroceryItem = GroceryCatalogue.SingleOrDefault(prod => prod.Id == barcode);
 
-                //Add GroceryItem to my shopping list
-                myGroceryList.AddGroceryItem(GroceryPurchase);
+                //make sure returned item does exist !null
+                if(GroceryItem != null)
+                {
+                   //Add to customer's receipt
+                    CustomerReceipt.AddGroceryItem(GroceryItem);
+                }
             }
 
             //Print out my shopping list
-            myGroceryList.PrintReceipt();
+            CustomerReceipt.PrintReceipt();
 
         }
     }

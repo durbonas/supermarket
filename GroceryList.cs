@@ -1,76 +1,52 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Supermarket
 {
-    class GroceryList
+    public class GroceryList
     {
-        private List<GroceryItem> _GroceryItemsList = new List<GroceryItem>();
-        public List<GroceryItem> GroceryItemsList
+        public List<GroceryItem> GroceryCatalogue = new List<GroceryItem>();
+        public List<GroceryItem> GroceryReceipt = new List<GroceryItem>();
+        public double Total {get;set;}
+ 
+        public List<GroceryItem> BuildGroceryCatalogue() 
         {
-            get {
-                return _GroceryItemsList;
-            }
-            set {
-                GroceryItemsList = value;
-            }
+            var _GroceryCatalogue = GroceryCatalogue;
+
+            _GroceryCatalogue.Add(new GroceryItem() {Id ="111", Name="Apple", RegularPrice = 0.49 , DiscountPrice = 0.29, IsPromotional = true, BuyXFreeDeal = 3});
+            _GroceryCatalogue.Add(new GroceryItem() {Id ="222", Name="Orange", RegularPrice = 1.19 , DiscountPrice = .99, IsPromotional = false, BuyXFreeDeal = 2});
+            _GroceryCatalogue.Add(new GroceryItem() {Id ="333", Name="Banana", RegularPrice = .99 , DiscountPrice = .49, IsPromotional = false, BuyXFreeDeal = 0});
+
+            return _GroceryCatalogue;
         }
 
-        private double _Total {get;set;}
-        public double Total
-        {
-            get 
-            {
-                return _Total;
-            } 
-            set 
-            {
-                Total = value;
-            }
-        }
-
-        public void AddGroceryItem(GroceryItem Item) 
+        public void AddGroceryItem(GroceryItem item) 
         {   
-            
-            if(_GroceryItemsList.Any(prod => prod.name == Item.name))
+            if(GroceryReceipt.Any(prod => prod.Id == item.Id))
             {   
-                var duplicateItem = _GroceryItemsList.FindLast(prod => prod.name == Item.name);
-                duplicateItem.quantity++;
+                var duplicateItem = GroceryReceipt.FindLast(selected => selected.Id == item.Id);
+                duplicateItem.Quantity++;
             }
             else
             {
-                _GroceryItemsList.Add(Item);
-            }
-        }
-
-        public void BuyThreeGetOneFree(GroceryItem Item)
-        {   
-            for (int i = 0; i < _GroceryItemsList.Count; i++)
-            {
-                var count = i;
+                GroceryReceipt.Add(item);
+                foreach (var i in GroceryReceipt)
+                {
+                    Console.WriteLine($"{i.Id}, {i.Quantity}, {i.RegularPrice}, {i.Price}");
+                }
                 
-                if(count == 2)
-            {   
-                Item.price = 0.00;
-                Console.WriteLine("Buy 2 get 1 Free");
-            } 
-            else 
-            {
-                Item.price = Item.regularPrice;
             }
-
-            }
-            
         }
 
         public double TotalGroceryList()
         {
             double totalPrice = 0;
 
-            foreach (var item in _GroceryItemsList)
+            foreach (var item in GroceryReceipt)
             {   
-                totalPrice += item.quantity * item.price;
+                totalPrice += item.Quantity * item.Price;
             }
 
             return totalPrice;
@@ -78,50 +54,68 @@ namespace Supermarket
 
         public int BuyQuantityForOneFree {set;get;}
         public int ItemsCalculatedForFree {set;get;}
+      
         public bool BuyXGetYFree(GroceryItem item)
         {
             //Total everything up
-            _Total = TotalGroceryList();
+            Total = TotalGroceryList();
 
             BuyQuantityForOneFree = item.BuyXFreeDeal;
-            ItemsCalculatedForFree = item.quantity / BuyQuantityForOneFree;
 
-            if(item.quantity >= BuyQuantityForOneFree) {
-                _Total = (_Total - ItemsCalculatedForFree) * item.price;
-                return true;
-            } return false;
+            if(BuyQuantityForOneFree == 0) {
+                return false;
+            }
+            else {
+                ItemsCalculatedForFree = item.Quantity / BuyQuantityForOneFree;
+
+                if(item.Quantity >= BuyQuantityForOneFree) {
+                    Total = (Total - ItemsCalculatedForFree) * item.Price;
+                } 
+
+                return true;  
+            }
+            
         }
 
 
         public void PrintReceipt() {
+
+            var PrintOutText = " ";
+            
             //Print Header
-            System.Console.WriteLine("\n\nBIG DAVE'S PRODUCE STORE\n-------------------------------");
+            PrintOutText += "\n\nBIG DAVE'S PRODUCE STORE\n-------------------------------\n";
 
             //Print each line item showing promotions
-            foreach (var item in GroceryItemsList)
+            foreach (var item in GroceryReceipt)
             {   
                 //Print out for discout promotion and quantity purchases
-                if(item.isPromotional && BuyXGetYFree(item))
+                if(item.IsPromotional && BuyXGetYFree(item))
                 {
-                    Console.WriteLine($"{item.quantity}x {item.name} \n was ${item.regularPrice}............NOW ${item.price} \n Buy {BuyQuantityForOneFree} get 1 FREE! ...{ItemsCalculatedForFree}@ -${item.price} \n");
+                    PrintOutText += $"{item.Quantity}x {item.Name} \n was ${item.RegularPrice}............NOW ${item.Price} \n Buy {BuyQuantityForOneFree} get 1 FREE! ...{ItemsCalculatedForFree}@ -${item.Price} \n\n";
+
+                    
                 } 
-                else if(item.isPromotional)
+                else if(item.IsPromotional)
                 {
-                    Console.WriteLine($"{item.quantity}x {item.name} \n was ${item.regularPrice} NOW ...........${item.price} \n");
+                    PrintOutText += $"{item.Quantity}x {item.Name} \n was ${item.RegularPrice} NOW ...........${item.Price} \n\n";
+
                 }
                 else if(BuyXGetYFree(item))
                 {
-                    Console.WriteLine($"{item.quantity}x {item.name} \n Buy {BuyQuantityForOneFree} get 1 FREE! ...{ItemsCalculatedForFree}@ -${item.price} \n");
+                    PrintOutText += $"{item.Quantity}x {item.Name} \n Buy {BuyQuantityForOneFree} get 1 FREE! ...{ItemsCalculatedForFree}@ -${item.Price} \n\n";
+
                 }
                 else 
                 {
-                      Console.WriteLine($"{item.quantity}x {item.name}................${item.price} \n");
+                      PrintOutText += $"{item.Quantity}x {item.Name}................${item.Price} \n\n";
+
                 }
             }
 
             //Print Total and Footer 
-                Console.WriteLine($"TOTAL....................${Total}\n-------------------------------\nThank you for shopping with us!\n\n");
+            PrintOutText += $"TOTAL....................${Total}\n-------------------------------\nThank you for shopping with us!\n\n";
+            Console.WriteLine(PrintOutText);
+            File.WriteAllText(@"C:\Users\durbonas\source\repos\supermarket\src\Supermarket\ReceiptText.txt", PrintOutText);
         }
     }
-
 }
