@@ -26,7 +26,10 @@ namespace Supermarket
         {   
             if(GroceryReceipt.Any(prod => prod.Id == item.Id))
             {   
-                var duplicateItem = GroceryReceipt.FindLast(selected => selected.Id == item.Id);
+                var duplicateItem = (from Item in GroceryReceipt
+                                    where Item.Id == item.Id
+                                    select Item).Single();
+
                 duplicateItem.Quantity++;
             }
             else
@@ -115,7 +118,16 @@ namespace Supermarket
             //Print Total and Footer 
             PrintOutText += $"TOTAL....................${Total}\n-------------------------------\nThank you for shopping with us!\n\n";
             Console.WriteLine(PrintOutText);
-            File.WriteAllText(@"C:\Users\durbonas\source\repos\supermarket\src\Supermarket\ReceiptText.txt", PrintOutText);
+            Console.WriteLine("Do you want to print this receipt? y = Yes, n = No");
+            var Print = Console.ReadLine();
+            if(Print == "y") {
+                File.WriteAllText(@"C:\Users\durbonas\source\repos\supermarket\src\Supermarket\ReceiptText.txt", PrintOutText);
+                Console.WriteLine("Your Receipt has been printed. Thank you");
+            } else if(Print == "n") {
+                Console.WriteLine("No receipt printed. Thank you");
+            } 
+            
+            
         }
     }
 }
