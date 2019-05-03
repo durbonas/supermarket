@@ -10,7 +10,7 @@ namespace Supermarket
         static void Main(string[] Barcodes)
         {   
             //Build store list
-            var GroceryCatalogue = new GroceryList().BuildGroceryCatalogue();
+            var Search = new GroceryList();
 
             //Start Receipt
             var CustomerReceipt = new GroceryList();
@@ -19,7 +19,7 @@ namespace Supermarket
             foreach (var barcode in Barcodes)
             {   
                 //If barcode matches return item
-                var GroceryItem = GroceryCatalogue.SingleOrDefault(prod => prod.Id == barcode);
+                var GroceryItem = Search.GroceryCatalogue.Single(prod => prod.Id == barcode);
 
                 //make sure returned item does exist !null
                 if(GroceryItem != null)

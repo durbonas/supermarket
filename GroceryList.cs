@@ -7,51 +7,35 @@ namespace Supermarket
 {
     public class GroceryList
     {
-        public List<GroceryItem> GroceryCatalogue = new List<GroceryItem>();
+        
+        public List<GroceryItem> GroceryCatalogue = new List<GroceryItem>()
+        {
+            new GroceryItem() {Id ="111", Name="Apple", RegularPrice = 0.49 , DiscountPrice = 0.29, IsPromotional = true, BuyXFreeDeal = 3},
+            new GroceryItem() {Id ="222", Name="Orange", RegularPrice = 1.19 , DiscountPrice = .99, IsPromotional = false, BuyXFreeDeal = 2},
+            new GroceryItem() {Id ="333", Name="Banana", RegularPrice = .99 , DiscountPrice = .49, IsPromotional = true, BuyXFreeDeal = 0}
+        };
         public List<GroceryItem> GroceryReceipt = new List<GroceryItem>();
         public double Total {get;set;}
- 
-        public List<GroceryItem> BuildGroceryCatalogue() 
-        {
-            var _GroceryCatalogue = GroceryCatalogue;
 
-            _GroceryCatalogue.Add(new GroceryItem() {Id ="111", Name="Apple", RegularPrice = 0.49 , DiscountPrice = 0.29, IsPromotional = true, BuyXFreeDeal = 3});
-            _GroceryCatalogue.Add(new GroceryItem() {Id ="222", Name="Orange", RegularPrice = 1.19 , DiscountPrice = .99, IsPromotional = false, BuyXFreeDeal = 2});
-            _GroceryCatalogue.Add(new GroceryItem() {Id ="333", Name="Banana", RegularPrice = .99 , DiscountPrice = .49, IsPromotional = false, BuyXFreeDeal = 0});
-
-            return _GroceryCatalogue;
-        }
 
         public void AddGroceryItem(GroceryItem item) 
         {   
             if(GroceryReceipt.Any(prod => prod.Id == item.Id))
             {   
-                var duplicateItem = (from Item in GroceryReceipt
-                                    where Item.Id == item.Id
-                                    select Item).Single();
-
+                var duplicateItem = GroceryReceipt.Single(Item => Item.Id == item.Id);
                 duplicateItem.Quantity++;
             }
             else
             {
                 GroceryReceipt.Add(item);
-                foreach (var i in GroceryReceipt)
-                {
-                    Console.WriteLine($"{i.Id}, {i.Quantity}, {i.RegularPrice}, {i.Price}");
-                }
-                
+                GroceryReceipt.ForEach(Item => Console.WriteLine($"{Item.Id}, {Item.Quantity}, {Item.RegularPrice}, {Item.Price}"));                
             }
         }
 
         public double TotalGroceryList()
         {
             double totalPrice = 0;
-
-            foreach (var item in GroceryReceipt)
-            {   
-                totalPrice += item.Quantity * item.Price;
-            }
-
+            GroceryReceipt.ForEach(item => totalPrice += item.Quantity * item.Price);
             return totalPrice;
         }
 
@@ -118,16 +102,15 @@ namespace Supermarket
             //Print Total and Footer 
             PrintOutText += $"TOTAL....................${Total}\n-------------------------------\nThank you for shopping with us!\n\n";
             Console.WriteLine(PrintOutText);
-            Console.WriteLine("Do you want to print this receipt? y = Yes, n = No");
+            Console.WriteLine("Do you want to print this receipt? 'y' = Yes, or any other key to exit");
             var Print = Console.ReadLine();
             if(Print == "y") {
                 File.WriteAllText(@"C:\Users\durbonas\source\repos\supermarket\src\Supermarket\ReceiptText.txt", PrintOutText);
-                Console.WriteLine("Your Receipt has been printed. Thank you");
-            } else if(Print == "n") {
-                Console.WriteLine("No receipt printed. Thank you");
+                Console.WriteLine("Your Receipt has been printed");
+            } else {
+                Console.WriteLine("Exiting App");
             } 
-            
-            
+
         }
     }
 }
